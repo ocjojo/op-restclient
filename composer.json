@@ -11,5 +11,10 @@
             "name": "Lukas Ehnle",
             "email": "me@ehnle.fyi"
         }
-    ]
+    ], 
+    "autoload": {
+        "psr-4": {
+            "OOPRestClient\\": "lib/"
+        }
+    }
 }
