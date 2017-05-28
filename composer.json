@@ -1,0 +1,15 @@
+{
+    "name": "ocjojo/oop-php-restclient",
+    "description": "A generic REST API client for PHP using objects to compose requests",
+    "type": "library",
+    "require": {
+        "tcdent/php-restclient": "^0.1.6"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lukas Ehnle",
+            "email": "me@ehnle.fyi"
+        }
+    ]
+}
