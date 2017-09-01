@@ -1,15 +1,17 @@
 <?php
 
-namespace OOPRestClient;
+namespace OPRestclient;
 /**
  * OOP PHP REST Client
- * https://github.com/ocjojo/oop-php-restclient
+ * https://github.com/ocjojo/op-restclient
  * (c) 2017 Lukas Ehnle <me@ehnle.fyi>
  */
 
-class RestClient extends \RestClient {
-
-	private static $instance;
+/**
+ * Client is just a wrapper class for tcdent/RestClient
+ * it is implemented as singleton
+ */
+class Client extends \RestClient {
 
 	private $api;
 
@@ -17,9 +19,7 @@ class RestClient extends \RestClient {
     {
         parent::__construct($options);
 
-        $this->api = new APIEndpoint();
-
-        self::$instance = $this;
+        $this->api = new APIEndpoint($this);
     }
 
 	/**
@@ -60,13 +60,4 @@ class RestClient extends \RestClient {
     {
         $this->api->__unset($name);
     }
-
-    public static function getInstance()
-    {
-    	if(! self::$instance instanceof RestClient){
-    		throw new \Error("OOPRestClient\RestClient not instantiated yet");
-    	}
-    	return self::$instance;
-    }
-
 }

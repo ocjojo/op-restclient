@@ -11,10 +11,13 @@
             "name": "Lukas Ehnle",
             "email": "me@ehnle.fyi"
         }
-    ], 
+    ],
+    "support": {
+        "issues": "https://github.com/ocjojo/op-restclient/issues"
+    },
     "autoload": {
         "psr-4": {
-            "OOPRestClient\\": "lib/"
+            "OPRestclient\\": "lib/"
         }
     }
 }

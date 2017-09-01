@@ -1,31 +1,37 @@
 <?php
 
-namespace OOPRestClient;
+namespace OPRestclient;
 
 /**
  * Class APIEndpoint
  * @author Lukas Ehnle <me@ehnle.fyi>
+ * Implements one specific endpoint with REST (Get, Post, Patch, Delete) methods.
+ * Sub-endpoints may be accessed via properties.
+ * Implements ArrayAccess for setting standard parameters via array access.
  */
 class APIEndpoint implements \ArrayAccess
 {
-	private $parts;
+	private $client; //reference to the client
 
-	private $subs;
+    private $parts; //array containing the url-parts
 
-	private $params;
+	private $subs; // array containing instantiated sub-endpoints
+
+	private $params; // ParameterBag containing the standard parameters
 
 	/**
      * BaseOperations constructor.
      */
-    public function __construct($parts = [], $newPart = NULL)
+    public function __construct(Client $client = NULL, $parts = [], $newPart = NULL)
     {
+        $this->client = $client;
         $this->parts = $parts;
+        $this->subs = array();
+        $this->params = new ParameterBag();
+        
         if($newPart){
         	$this->parts[] = $newPart;
         }
-
-        $this->subs = array();
-		$this->params = new Param();
     }
 
 	public function get($params = []){
@@ -44,28 +50,38 @@ class APIEndpoint implements \ArrayAccess
 		return $this->execute('delete', $params);
 	}
 
+    public function reset(){
+        $this->params->reset();
+    }
+
+    public function getParameters(){
+        return $this->params->getValues();
+    }
+
     private function execute($method, $params) {
-        $params = array_merge($params, $this->params->value());
-        return RestClient::getInstance()->execute(
-            implode('/', $this->parts),
+        $params = $this->params->mergeAndGetValues($params);
+        return $this->client->execute(
+            implode('/', $this->parts), //create url from parts
             $method,
             $params
         );
     }
 
 	/**
+     * allows access to sub-endpoints via object properties
      * @param mixed $name property name
      * @return mixed|null property value
      */
     public function __get($name)
     {
     	if(!isset($this->subs[$name])){
-    		$this->subs[$name] = new APIEndpoint($this->parts, $name);
+    		$this->subs[$name] = new APIEndpoint($this->client, $this->parts, $name);
     	}
     	return $this->subs[$name];
     }
 
     /**
+     * allows setting standard parameters for multiple endpoints by assigning a nested array
      * @param string $name name of the property to change
      * @param array $arr new values for the property
      * @return void
@@ -83,41 +99,42 @@ class APIEndpoint implements \ArrayAccess
     }
 
     /**
-     * @param mixed $offset
-     * @return bool indicating if this offset is instantiated
+     * @param mixed $parameter
+     * @return bool indicating if the parameter is set
      */
-    public function offsetExists($offset)
+    public function offsetExists($parameter)
     {
-        return isset($this->params[$offset]);
+        return isset($this->params[$parameter]);
     }
 
     /**
-     * @param mixed $offset
-     * @return mixed returns the instance at this offset
+     * @param mixed $parameter the parameter to get
+     * @return mixed returns the parameter
      */
-    public function offsetGet($offset)
+    public function offsetGet($parameter)
     {
-        if(!isset($this->params[$offset])){
-            $this->params[$offset] = new Param();
+        if(!isset($this->params[$parameter])){
+            $this->params[$parameter] = new ParameterBag();
         }
-        return $this->params[$offset];
+        return $this->params[$parameter];
     }
 
     /**
-     * @param mixed $offset
+     * sets a parameter to the value
+     * @param mixed $parameter
      * @param mixed $value
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($parameter, $value)
     {
-        $this->params[$offset] = $value;
+        $this->params[$parameter] = $value;
     }
 
     /**
-     * @param mixed $offset offset of the instance to be destroyed
+     * @param mixed $parameter parameter to be deleted
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($parameter)
     {
-        unset($this->params[$offset]);
+        unset($this->params[$parameter]);
     }
 
 }
