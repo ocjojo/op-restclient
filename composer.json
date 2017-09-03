@@ -4,7 +4,7 @@
     "description": "A generic REST API client for PHP using objects to compose requests",
     "type": "library",
     "require": {
-        "tcdent/php-restclient": "^0.1.6"
+        "tcdent/php-restclient": "dev-master"
     },
     "license": "MIT",
     "authors": [
@@ -16,6 +16,7 @@
     "support": {
         "issues": "https://github.com/ocjojo/op-restclient/issues"
     },
+    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "OPRestclient\\": "lib/"
