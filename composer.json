@@ -1,5 +1,6 @@
 {
     "name": "ocjojo/op-restclient",
+    "version": "0.0.1",
     "description": "A generic REST API client for PHP using objects to compose requests",
     "type": "library",
     "require": {
